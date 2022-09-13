@@ -7,15 +7,19 @@ import com.huahuo.reggie.dto.DishDto;
 import com.huahuo.reggie.entity.Category;
 import com.huahuo.reggie.entity.Dish;
 import com.huahuo.reggie.entity.DishFlavor;
+import com.huahuo.reggie.mapper.DishMapper;
 import com.huahuo.reggie.service.CategoryService;
 import com.huahuo.reggie.service.DishFlavorService;
 import com.huahuo.reggie.service.DishService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -24,6 +28,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dish")
 @Slf4j
+@Api("菜品管理")
 public class DishController {
   @Autowired private DishService dishService;
 
@@ -38,6 +43,7 @@ public class DishController {
    * @param dishDto
    * @return
    */
+  @ApiOperation("新增菜品")
   @PostMapping
   public R<String> save(@RequestBody DishDto dishDto) {
     log.info(dishDto.toString());
@@ -58,6 +64,7 @@ public class DishController {
    * @param name
    * @return
    */
+  @ApiOperation("菜品信息分页查询")
   @GetMapping("/page")
   public R<Page> page(int page, int pageSize, String name) {
 
@@ -111,6 +118,7 @@ public class DishController {
    * @param id
    * @return
    */
+  @ApiOperation("根据id查询菜品信息和对应的口味信息")
   @GetMapping("/{id}")
   public R<DishDto> get(@PathVariable Long id) {
 
@@ -125,6 +133,7 @@ public class DishController {
    * @param dishDto
    * @return
    */
+  @ApiOperation("修改菜品")
   @PutMapping
   public R<String> update(@RequestBody DishDto dishDto) {
     log.info(dishDto.toString());
@@ -163,6 +172,7 @@ public class DishController {
    * @param ids
    * @return
    */
+  @ApiOperation("停售")
   @PostMapping("/status/0")
   public R<String> stop(@RequestParam List<Long> ids) {
     for (Long id : ids) {
@@ -179,6 +189,7 @@ public class DishController {
    * @param ids
    * @return
    */
+  @ApiOperation("起售")
   @PostMapping("/status/1")
   public R<String> up(@RequestParam List<Long> ids) {
     for (Long id : ids) {
@@ -189,6 +200,16 @@ public class DishController {
     return R.success("操作成功");
   }
 
+  @Autowired DishMapper dishMapper;
+
+  @ApiOperation("删除菜品")
+  @DeleteMapping()
+  public R<String> deleteById(@RequestParam ArrayList<Long> ids) {
+    dishMapper.deleteBatchIds(ids);
+    return R.success("删除成功");
+  }
+
+  @ApiOperation("回显数据")
   @GetMapping("/list")
   public R<List<DishDto>> list(Dish dish) {
     List<DishDto> dishDtoList = null;

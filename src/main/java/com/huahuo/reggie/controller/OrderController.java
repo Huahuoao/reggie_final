@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.huahuo.reggie.common.R;
 import com.huahuo.reggie.entity.Orders;
 import com.huahuo.reggie.service.OrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.Date;
 @Slf4j
 @RestController
 @RequestMapping("/order")
+@Api("订单管理")
 public class OrderController {
 
   @Autowired private OrderService orderService;
@@ -25,6 +28,7 @@ public class OrderController {
    * @param orders
    * @return
    */
+  @ApiOperation("用户下单")
   @PostMapping("/submit")
   public R<String> submit(@RequestBody Orders orders) {
     log.info("订单数据：{}", orders);
@@ -32,6 +36,7 @@ public class OrderController {
     return R.success("下单成功");
   }
 
+  @ApiOperation("分页查询订单信息")
   @GetMapping("/page")
   public R<Page> page(int page, int pageSize, Long number, Date beginTime, Date endTime) {
     // 构造分页构造器对象
@@ -48,5 +53,13 @@ public class OrderController {
     // 分页查询
     orderService.page(pageInfo, queryWrapper);
     return R.success(pageInfo);
+  }
+
+  @PutMapping
+  R<String> send(@RequestBody Orders orders) {
+
+    orders.setStatus(1);
+    orderService.updateById(orders);
+    return R.success("派送成功！");
   }
 }

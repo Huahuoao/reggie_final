@@ -5,6 +5,8 @@ import com.huahuo.reggie.common.R;
 import com.huahuo.reggie.entity.User;
 import com.huahuo.reggie.service.UserService;
 import com.huahuo.reggie.utils.ValidateCodeUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+@Api("用户管理")
 public class UserController {
 
   @Autowired private UserService userService;
@@ -33,6 +36,7 @@ public class UserController {
    * @param user
    * @return
    */
+  @ApiOperation("发送验证码")
   @PostMapping("/sendMsg")
   public R<String> sendMsg(@RequestBody User user, HttpSession session) {
     // 获取手机号
@@ -65,6 +69,7 @@ public class UserController {
    * @param session
    * @return
    */
+  @ApiOperation("用户端登录")
   @PostMapping("/login")
   public R<User> login(@RequestBody Map map, HttpSession session) {
     log.info(map.toString());

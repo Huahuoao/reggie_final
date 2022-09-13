@@ -12,6 +12,8 @@ import com.huahuo.reggie.mapper.SetmealMapper;
 import com.huahuo.reggie.service.CategoryService;
 import com.huahuo.reggie.service.SetmealDishService;
 import com.huahuo.reggie.service.SetmealService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/setmeal")
 @Slf4j
+@Api("套餐管理")
 public class SetmealController {
 
   @Autowired private SetmealService setmealService;
@@ -41,6 +44,7 @@ public class SetmealController {
    * @param setmealDto
    * @return
    */
+  @ApiOperation("新增套餐")
   @PostMapping
   @CacheEvict(value = "setmealCache", allEntries = true)
   public R<String> save(@RequestBody SetmealDto setmealDto) {
@@ -59,6 +63,7 @@ public class SetmealController {
    * @param name
    * @return
    */
+  @ApiOperation("套餐分页查询")
   @GetMapping("/page")
   public R<Page> page(int page, int pageSize, String name) {
     // 分页构造器对象
@@ -107,6 +112,7 @@ public class SetmealController {
    * @param ids
    * @return
    */
+  @ApiOperation("删除套餐")
   @DeleteMapping
   @CacheEvict(value = "setmealCache", allEntries = true)
   public R<String> delete(@RequestParam List<Long> ids) {
@@ -123,6 +129,7 @@ public class SetmealController {
    * @param setmeal
    * @return
    */
+  @ApiOperation("根据条件查询套餐数据")
   @Cacheable(value = "setmealCache", key = "#setmeal.categoryId+'_'+#setmeal.status")
   @GetMapping("/list")
   public R<List<Setmeal>> list(Setmeal setmeal) {
@@ -139,6 +146,7 @@ public class SetmealController {
 
   @Autowired private DishMapper dishMapper;
 
+  @ApiOperation("回显套餐信息")
   @GetMapping("/{id}")
   public R<SetmealDto> update(@PathVariable Long id) {
     SetmealDto setmealDto = new SetmealDto();
@@ -159,6 +167,7 @@ public class SetmealController {
    * @param ids
    * @return
    */
+  @ApiOperation("停售")
   @PostMapping("/status/0")
   public R<String> stop(@RequestParam List<Long> ids) {
     for (Long id : ids) {
@@ -175,6 +184,7 @@ public class SetmealController {
    * @param ids
    * @return
    */
+  @ApiOperation("启售")
   @PostMapping("/status/1")
   public R<String> up(@RequestParam List<Long> ids) {
     for (Long id : ids) {
